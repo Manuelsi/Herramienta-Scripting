@@ -70,7 +70,7 @@ public class WindowsScripts : EditorWindow
         for (int i = 0; i < allNodes.Count; i++)
         {
             if (allNodes[i] == _selectedNode)
-                GUI.backgroundColor = Color.green;
+                GUI.backgroundColor = Color.gray;
 
             allNodes[i].myRect = GUI.Window(i, allNodes[i].myRect, DrawNode, allNodes[i].nodeName);
             GUI.backgroundColor = oriCol;
