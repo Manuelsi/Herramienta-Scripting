@@ -41,7 +41,11 @@ public class WindowsScripts : EditorWindow
         CheckMouseInput(Event.current);
 
         EditorGUILayout.BeginVertical(GUILayout.Height(100));
+        EditorGUILayout.BeginHorizontal();
         EditorGUILayout.LabelField("Script Easy", myStyle, GUILayout.Height(50));
+        if (GUILayout.Button("Instruction", GUILayout.Width(75), GUILayout.Height(15)))
+            WindowInstructor.OpenWindowInstructor();
+        EditorGUILayout.EndHorizontal();
         EditorGUILayout.Space();
         EditorGUILayout.BeginHorizontal();
         currentName = EditorGUILayout.TextField("Nombre: ", currentName);
@@ -135,9 +139,6 @@ public class WindowsScripts : EditorWindow
     }
     private void DrawNode(int id)
     {
-        
-        
-
         if (!_panningScreen)
         {
 
