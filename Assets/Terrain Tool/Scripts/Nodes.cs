@@ -1,28 +1,50 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
-public class Nodes : MonoBehaviour
+public abstract class DrawnNode
 {
-    public Rect myRect;
     public string nodeName;
-    public string dialogo;
-    public float duration;
-    private bool _overNode;
-    public List<Nodes> connected;
+	public DrawnNode nextNode;
 
-    public Nodes(float x, float y, float width, float height, string name)
+	public abstract string Content { get; }
+	public abstract string NodeType { get; }
+
+	private Rect _myRect;
+    public Rect MyRect {
+		get => _myRect;
+		private set => _myRect = value;
+	}
+
+	public Vector2 RectPos {
+		get => MyRect.position;
+		set {
+			_myRect.position = value;
+		}
+	}
+
+	public virtual Vector2 ArrowTargetPos {
+		get => new Vector2(RectPos.x, MyRect.y + (MyRect.height / 2f));
+	}
+
+	public virtual Vector2 ArrowSourcePos {
+		get => new Vector2(RectPos.x + MyRect.width, MyRect.y + (MyRect.height / 2f));
+	}
+
+    public DrawnNode(Rect rect)
     {
-        myRect = new Rect(x, y, width, height);
-        connected = new List<Nodes>();
-        nodeName = name;
+		MyRect = rect;
     }
 
-    public void CheckMouse(Event cE, Vector2 pan)
-    {
-        _overNode = myRect.Contains(cE.mousePosition - pan);
-    }
+    public bool CheckMouse(Event cE, Vector2 pan)=>
+        MyRect.Contains(cE.mousePosition - pan);
+    
+	public virtual void DrawLine(DrawnNode target) =>
+		Handles.DrawLine(ArrowSourcePos, target.ArrowTargetPos);
 
-    public bool OverNode
-    { get { return _overNode; } }
+    //public bool OverNode
+    //{ get { return _overNode; } }
+
+
 }
