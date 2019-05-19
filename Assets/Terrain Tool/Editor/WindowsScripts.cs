@@ -48,6 +48,7 @@ public class WindowsScripts : EditorWindow
         var nStyle = new GUIStyle();
         
     }
+    
     private void OnGUI()
     {
         CheckMouseInput(Event.current);
