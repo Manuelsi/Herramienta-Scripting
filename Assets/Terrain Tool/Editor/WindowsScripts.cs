@@ -7,23 +7,32 @@ using System;
 public class WindowsScripts : EditorWindow
 {
     private List<Nodes> allNodes;
-    private GUIStyle myStyle;
+    private List<Connection> connections;
     private float toolbarHeight = 100;
     private string currentName;
+    private bool _panningScreen;
+
 
     private Nodes _selectedNode;
-
-    private bool _panningScreen;
-    private Vector2 graphPan;
     private Rect graphRect;
+    private Vector2 graphPan;
     private Vector2 _originalMousePosition;
     private Vector2 prevPan;
+    private GUIStyle myStyle;
+    private GUIStyle nodeStyle;
+    private GUIStyle inPointStyle;
+    private GUIStyle outPointStyle;
     public GUIStyle wrapTextFieldStyle;
+
+    private ConectionPoint selectedinpoint;
+    private ConectionPoint selectedOutPoint;
+
     [MenuItem("CustomTools/ Easy Script")]
     public static void OpenWindows()
     {
         var mySelf = GetWindow<WindowsScripts>();
         mySelf.allNodes = new List<Nodes>();
+
         mySelf.myStyle = new GUIStyle();
         mySelf.myStyle.fontSize = 20;
         mySelf.myStyle.alignment = TextAnchor.MiddleCenter;
@@ -35,6 +44,9 @@ public class WindowsScripts : EditorWindow
         
         mySelf.wrapTextFieldStyle = new GUIStyle(EditorStyles.textField);
         mySelf.wrapTextFieldStyle.wordWrap = true;
+
+        var nStyle = new GUIStyle();
+        
     }
     private void OnGUI()
     {
@@ -54,7 +66,7 @@ public class WindowsScripts : EditorWindow
             AddNode();
         EditorGUILayout.EndHorizontal();
         EditorGUILayout.EndVertical();
-
+        DrawConnections();
         
         graphRect.x = graphPan.x;
         graphRect.y = graphPan.y;
@@ -129,16 +141,59 @@ public class WindowsScripts : EditorWindow
         }
     }
     
+    private void DrawConnections()
+    {
+        if (connections != null)
+        {
+            for (int i = 0; i < connections.Count; i++)
+                connections[i].Draw();
+        }
+    }
     
 
     private void AddNode()
     {
-        allNodes.Add(new Nodes(0, 0, 200, 150, currentName));
+        allNodes.Add(new Nodes(_originalMousePosition, 200, 150, currentName,nodeStyle,inPointStyle,outPointStyle,OnClickInPoint,OnClickOutPoint));
         currentName = "";
+        
         Repaint();
+    }
+
+    private void OnClickInPoint(ConectionPoint inPoint)
+    {
+        selectedinpoint = inPoint;
+        if (selectedinpoint != null)
+        {
+            if (selectedOutPoint.node != selectedinpoint.node)
+            {
+                CreateConnection();
+                ClearConnectionSelection();
+            }
+            else
+            {
+                ClearConnectionSelection();
+            }
+        }
+    }
+    private void OnClickOutPoint(ConectionPoint outPoint)
+    {
+        selectedOutPoint = outPoint;
+        if (selectedinpoint != null)
+        {
+            if (selectedOutPoint.node != selectedinpoint.node)
+            {
+                CreateConnection();
+                ClearConnectionSelection();
+            }
+            else
+            {
+                ClearConnectionSelection();
+            }
+        }
     }
     private void DrawNode(int id)
     {
+        
         if (!_panningScreen)
         {
 
@@ -153,5 +208,22 @@ public class WindowsScripts : EditorWindow
             if (allNodes[id].myRect.y < toolbarHeight - graphPan.y)
                 allNodes[id].myRect.y = toolbarHeight - graphPan.y;
         }
+
+    }
+    private void OnClickRemoveConnection(Connection connection)
+    {
+        connections.Remove(connection);
+    }
+
+    private void CreateConnection()
+    {
+        if (connections == null)
+            connections = new List<Connection>();
+        connections.Add(new Connection(selectedinpoint, selectedOutPoint, OnClickRemoveConnection));
+    }
+    private void ClearConnectionSelection()
+    {
+        selectedinpoint = null;
+        selectedOutPoint = null;
     }
 }
