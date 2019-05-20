@@ -9,7 +9,7 @@ public abstract class DrawnNode
     public string nodeName;
 	public DrawnNode nextNode;
 
-	public abstract string Content { get; protected set; }
+	public abstract string Content { get; }
 	public abstract string NodeType { get; protected set; }
 	protected abstract Vector2 WindowSize { get; }
 
@@ -54,6 +54,10 @@ public abstract class DrawnNode
 	public virtual void DrawLine(DrawnNode target) =>
 		Handles.DrawLine(ArrowSourcePos, target.ArrowTargetPos);
 
+	public virtual void DrawConnections() {
+		DrawLine(nextNode);
+	}
+
     //public bool OverNode
     //{ get { return _overNode; } }
 
@@ -62,8 +66,7 @@ public abstract class DrawnNode
 		data.nodeType = NodeType;
 		data.id = ID;
 		data.data = new List<object> {
-			nodeName, //0
-			Content //1
+			nodeName //0
 		};
 		return data;
 	}
@@ -75,7 +78,6 @@ public abstract class DrawnNode
 		ID = data.id;
 		var info = data.data;
 		nodeName = (string)info[0];
-		Content = (string)info[1];
 	}
 
 	protected void GetNewID() {

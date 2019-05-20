@@ -59,7 +59,7 @@ public class WindowsScripts : EditorWindow {
 		var oriCol = GUI.backgroundColor;
 		for(int i = 0; i < allNodes.Count; i++)
 		{
-			allNodes[i].DrawLine(allNodes[i].nextNode);
+			allNodes[i].DrawConnections();
 			/*Handles.DrawLine(
 				new Vector2(allNodes[i].MyRect.position.x + allNodes[i].MyRect.width / 2f,
 					allNodes[i].MyRect.position.y + allNodes[i].MyRect.height / 2f),
