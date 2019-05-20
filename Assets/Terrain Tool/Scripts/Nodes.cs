@@ -13,6 +13,9 @@ public abstract class DrawnNode
 	public abstract string NodeType { get; protected set; }
 	protected abstract Vector2 WindowSize { get; }
 
+	private static int currentAvailableID = 0;
+	protected int ID;
+
 	protected Rect _myRect;
     public Rect MyRect {
 		get => _myRect;
@@ -32,16 +35,20 @@ public abstract class DrawnNode
 		get => new Vector2(RectPos.x + MyRect.width, MyRect.y + (MyRect.height / 2f));
 	}
 
-    public DrawnNode(Vector2 position)
+	#region Constructor
+	public DrawnNode(Vector2 position)
     {
 		_myRect = new Rect(position, WindowSize);
-    }
-
-	public DrawnNode() {
-		_myRect = new Rect(0, 0, WindowSize.x, WindowSize.y);
+		GetNewID();
 	}
 
-    public bool CheckMouse(Event cE, Vector2 pan)=>
+	public DrawnNode() {
+		_myRect = new Rect(Vector2.zero, WindowSize);
+		GetNewID();
+	}
+	#endregion
+
+	public bool CheckMouse(Event cE, Vector2 pan)=>
         MyRect.Contains(cE.mousePosition - pan);
     
 	public virtual void DrawLine(DrawnNode target) =>
@@ -53,6 +60,7 @@ public abstract class DrawnNode
 	public virtual NodeData GetData() {
 		var data = new NodeData();
 		data.nodeType = NodeType;
+		data.id = ID;
 		data.data = new List<object> {
 			nodeName, //0
 			Content //1
@@ -64,14 +72,25 @@ public abstract class DrawnNode
 		if(NodeType != data.nodeType)
 			//throw new ArgumentException($"Node type does not match. Expected {NodeType} but got {data.nodeType}.");
 			throw new ArgumentException($"Tipos de nodos no coinciden. Esperaba {NodeType} pero obtuvo {data.nodeType}.");
+		ID = data.id;
 		var info = data.data;
 		nodeName = (string)info[0];
 		Content = (string)info[1];
+	}
+
+	protected void GetNewID() {
+		ID = currentAvailableID;
+		currentAvailableID++;
+	}
+
+	public static void SetCurrentAssignableID(int id) {
+		currentAvailableID = id;
 	}
 }
 
 [Serializable]
 public struct NodeData {
 	public string nodeType;
+	public int id;
 	public List<object> data;
 }
