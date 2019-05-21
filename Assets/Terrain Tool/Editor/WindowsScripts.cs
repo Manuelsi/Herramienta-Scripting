@@ -10,7 +10,6 @@ public class WindowsScripts : EditorWindow {
 	private string currentName;
 
 	private DrawnNode _selectedNode;
-
 	private bool _panningScreen;
 	private Vector2 graphPan;
 	private Rect graphRect;
@@ -40,7 +39,8 @@ public class WindowsScripts : EditorWindow {
 		EditorGUILayout.LabelField("Script Easy", myStyle, GUILayout.Height(50));
 		EditorGUILayout.Space();
 		EditorGUILayout.BeginHorizontal();
-		currentName = EditorGUILayout.TextField("Nombre: ", currentName);
+        
+        currentName = EditorGUILayout.TextField("Nombre: ", currentName);
 		EditorGUILayout.Space();
 		if(GUILayout.Button("Create Script", GUILayout.Width(100), GUILayout.Height(30)))
 			AddNode();
@@ -74,7 +74,7 @@ public class WindowsScripts : EditorWindow {
 			if(allNodes[i] == _selectedNode)
 				GUI.backgroundColor = Color.gray;
 
-			var nodeRect = GUI.Window(i, allNodes[i].MyRect, DrawNode, allNodes[i].nodeName);
+			var nodeRect = GUI.Window(i, allNodes[i].MyRect, DrawNode, allNodes[i].NodeType); //TODO: crear metodo dentro DrawnNode
 			allNodes[i].RectPos = nodeRect.position;
 
 			GUI.backgroundColor = oriCol;

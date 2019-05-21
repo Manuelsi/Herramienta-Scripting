@@ -5,9 +5,9 @@ using UnityEngine;
 using UnityEditor;
 
 public abstract class DrawnNode {
-	public string nodeName;
+	//public string nodeName;
 	public DrawnNode nextNode;
-
+    public string[] nodeClass = { "If", "For" };
 	public abstract string Content { get; }
 	public abstract string NodeType { get; }
 	protected abstract Vector2 WindowSize { get; }
@@ -73,8 +73,7 @@ public abstract class DrawnNode {
 		data.nodeType = NodeType;
 		data.id = ID;
 		data.data = new List<object> {
-			nodeName, //0
-            GetNextNodeID()//1
+            GetNextNodeID()//0
 			//Remember to update NodeData LastIndex 
 		};
 		return data;
@@ -86,8 +85,7 @@ public abstract class DrawnNode {
 			throw new ArgumentException($"Tipos de nodos no coinciden. Esperaba {NodeType} pero obtuvo {data.nodeType}.");
 		ID = data.id;
 		var info = data.data;
-		nodeName = (string)info[0];
-		nextNode = GetNodeByID((int)info[1]);
+		nextNode = GetNodeByID((int)info[0]);
 	}
 
 	public void SetNodeID(int id) =>
@@ -120,6 +118,6 @@ public class NodeData {
 	public int id;
 	public List<object> data = new List<object>();
 
-	public const int lastIndex = 1;
+	public const int lastIndex = 0;
 }
 
