@@ -29,7 +29,7 @@ public class Placeholder : MonoBehaviour
 	// Start is called before the first frame update
 	void Start() {
 		var data = new ScriptComponentPackage() {
-			additionalMethods = new List<(string, StringBuilder, bool)> { ("Blah", new StringBuilder(blahMethod), false) },
+			additionalMethods = new List<(string, StringBuilder, bool, string)> { ("Blah", new StringBuilder(blahMethod), false, "void") },
 			className = "Testero",
 			ints = ints.Select(x => (x, true)).ToList(),
 			strings = strings.Select(x => (x, true)).ToList(),

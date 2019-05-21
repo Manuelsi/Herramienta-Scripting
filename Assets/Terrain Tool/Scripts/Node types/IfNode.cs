@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Text;
 using UnityEngine;
 
 public class IfNode : DrawnNode {
-	public override string Content => throw new NotImplementedException();
+	public override StringBuilder Content => throw new NotImplementedException();
 
 	public override string NodeType { get => "If"; }
 	protected override Vector2 WindowSize => new Vector2(100, 100);
@@ -22,7 +23,7 @@ public class IfNode : DrawnNode {
 		int lastIndex = NodeData.lastIndex;
 		info[lastIndex + 1] = var1;
 		info[lastIndex + 2] = var2;
-		info[lastIndex + 3] = GetIdByNode(boolMethod);
+		info[lastIndex + 3] = boolMethod.ID;
 
 		return prev;
 	}

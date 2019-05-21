@@ -105,11 +105,11 @@ public static class ScriptAssembler {
 
 	#region Form Methods
 	public static StringBuilder Ref_FormMethod(StringBuilder target, string name,
-		StringBuilder body, bool isPublic = false) =>
-		Ref_Enclose(target, (isPublic ? "public" : "private") + " void " + name + "()", body);
+		StringBuilder body, bool isPublic = false, string type = "void") =>
+		Ref_Enclose(target, $"{(isPublic ? "public" : "private")} {type} {name} ()", body);
 
-	public static StringBuilder FormMethod(string name, StringBuilder body, bool isPublic = false) =>
-		Enclose((isPublic ? "public" : "private") + " void " + name + "()", body);
+	public static StringBuilder FormMethod(string name, StringBuilder body, bool isPublic = false, string type = "void") =>
+		Enclose($"{(isPublic ? "public" : "private")} {type} {name} ()", body);
 
 	#endregion
 
@@ -201,7 +201,7 @@ public class ScriptComponentPackage {
 
 	public StringBuilder startMethod;
 	public StringBuilder updateMethod;
-	public List<(string, StringBuilder, bool)> additionalMethods;
+	public List<(string name, StringBuilder body, bool isPublic, string type)> additionalMethods;
 
 	public string Assemble() {
 		var fullScript = new StringBuilder();
@@ -219,7 +219,7 @@ public class ScriptComponentPackage {
 			foreach(var item in additionalMethods)
 			{
 				_ = ScriptAssembler.Ref_FormMethod(classBody,
-					item.Item1, item.Item2, item.Item3)?.Append(ScriptAssembler.NL);
+					item.name, item.body, item.isPublic, item.type)?.Append(ScriptAssembler.NL);
 			}
 
 

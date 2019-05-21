@@ -1,14 +1,14 @@
 ﻿using System;
+using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
 public abstract class DrawnNode {
-	public string nodeName;
 	public DrawnNode nextNode;
 
-	public abstract string Content { get; }
+	public abstract StringBuilder Content { get; }
 	public abstract string NodeType { get; }
 	protected abstract Vector2 WindowSize { get; }
 
@@ -73,8 +73,7 @@ public abstract class DrawnNode {
 		data.nodeType = NodeType;
 		data.id = ID;
 		data.data = new List<object> {
-			nodeName, //0
-            GetNextNodeID()//1
+            GetNextNodeID()//0
 			//Remember to update NodeData LastIndex 
 		};
 		return data;
@@ -86,22 +85,21 @@ public abstract class DrawnNode {
 			throw new ArgumentException($"Tipos de nodos no coinciden. Esperaba {NodeType} pero obtuvo {data.nodeType}.");
 		ID = data.id;
 		var info = data.data;
-		nodeName = (string)info[0];
-		nextNode = GetNodeByID((int)info[1]);
+		nextNode = GetNodeByID((int)info[0]);
 	}
 
 	public void SetNodeID(int id) =>
 		ID = id;
 
 	private int GetNextNodeID() =>
-		GetIdByNode(nextNode);
+		GetID(nextNode);
 
 	public static DrawnNode GetNodeByID(int id) {
 		throw new NotImplementedException("Falta implementar un metodo que busque la lista de todos los nodos.");
 		//Incluir devolver null si es -1
 	}
 
-	public static int GetIdByNode(DrawnNode node) =>
+	public static int GetID(DrawnNode node) =>
 		node == null ? -1 : node.ID;
 
 	protected void GetNewID() {
@@ -120,6 +118,6 @@ public class NodeData {
 	public int id;
 	public List<object> data = new List<object>();
 
-	public const int lastIndex = 1;
+	public const int lastIndex = 0;
 }
 

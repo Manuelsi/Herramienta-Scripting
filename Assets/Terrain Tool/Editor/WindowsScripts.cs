@@ -57,6 +57,7 @@ public class WindowsScripts : EditorWindow {
 
 		BeginWindows();
 		var oriCol = GUI.backgroundColor;
+		
 		for(int i = 0; i < allNodes.Count; i++)
 		{
 			allNodes[i].DrawConnections();
@@ -74,7 +75,7 @@ public class WindowsScripts : EditorWindow {
 			if(allNodes[i] == _selectedNode)
 				GUI.backgroundColor = Color.gray;
 
-			var nodeRect = GUI.Window(i, allNodes[i].MyRect, DrawNode, allNodes[i].nodeName);
+			var nodeRect = GUI.Window(i, allNodes[i].MyRect, DrawNode, allNodes[i].NodeType);
 			allNodes[i].RectPos = nodeRect.position;
 
 			GUI.backgroundColor = oriCol;
