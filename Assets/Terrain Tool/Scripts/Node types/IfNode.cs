@@ -2,7 +2,7 @@
 using UnityEngine;
 
 public class IfNode : DrawnNode {
-	public override string Content => throw new NotImplementedException();;
+	public override string Content => throw new NotImplementedException();
 
 	public override string NodeType { get => "If"; }
 	protected override Vector2 WindowSize => new Vector2(100, 100);
@@ -66,7 +66,7 @@ public class IfNode : DrawnNode {
 			if(currentSubtype != IfSubtype.Method)
 				return $"{var1} {ComparatorSign} {var2}";
 			//TODO: Nodo Metodo
-
+			throw new NotImplementedException();
 		}
 	}
 
