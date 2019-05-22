@@ -4,6 +4,7 @@ using System.Text;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public class MethodNode : DrawnNode
 {
 	public string methodName;

@@ -32,6 +32,7 @@ public class WindowsScripts : EditorWindow {
 
 		mySelf.wrapTextFieldStyle = new GUIStyle(EditorStyles.textField);
 		mySelf.wrapTextFieldStyle.wordWrap = true;
+		mySelf.wantsMouseMove = true;
 	}
 	private void OnGUI() {
 		CheckMouseInput(Event.current);
@@ -87,7 +88,6 @@ public class WindowsScripts : EditorWindow {
 		if(!graphRect.Contains(currentE.mousePosition) || !(focusedWindow == this || mouseOverWindow == this))
 			return;
 
-
 		if(currentE.button == 2 && currentE.type == EventType.MouseDown)
 		{
 			_panningScreen = true;
@@ -131,7 +131,7 @@ public class WindowsScripts : EditorWindow {
 
 
 	private void AddNode() {
-		//allNodes.Add(new Node(new Rect(0, 0, 200, 150), currentName));
+		allNodes.Add(new IfNode());
 		currentName = "";
 		Repaint();
 	}

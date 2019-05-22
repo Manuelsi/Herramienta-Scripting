@@ -2,6 +2,7 @@
 using System.Text;
 using UnityEngine;
 
+[Serializable]
 public class IfNode : DrawnNode {
 	public override StringBuilder Content => throw new NotImplementedException();
 
