@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEditor;
 
@@ -9,7 +10,9 @@ public class WindowsScripts : EditorWindow {
 	private float toolbarHeight = 100;
 	private string currentName;
 
+    
 	private DrawnNode _selectedNode;
+    private DrawnNode nxNode;
 	private bool _panningScreen;
 	private Vector2 graphPan;
 	private Rect graphRect;
@@ -31,6 +34,7 @@ public class WindowsScripts : EditorWindow {
 
 		mySelf.wrapTextFieldStyle = new GUIStyle(EditorStyles.textField);
 		mySelf.wrapTextFieldStyle.wordWrap = true;
+		mySelf.wantsMouseMove = true;
 	}
 	private void OnGUI() {
 		CheckMouseInput(Event.current);
@@ -83,6 +87,22 @@ public class WindowsScripts : EditorWindow {
 		GUI.EndGroup();
 	}
 	private void CheckMouseInput(Event currentE) {
+
+        if (currentE.button == 0&& currentE.type==EventType.MouseDown)
+        {
+            GenericMenu genericMenu = new GenericMenu();
+
+			foreach(var item in allNodes)
+			{
+				if(item.MyRect.Contains(currentE.mousePosition))
+				{
+					nxNode = item;
+					break;
+				}
+			}
+			genericMenu.AddItem(new GUIContent("Unir Nodos"), false, JoinNodes);
+        }
+
 		if(!graphRect.Contains(currentE.mousePosition) || !(focusedWindow == this || mouseOverWindow == this))
 			return;
 
@@ -127,10 +147,11 @@ public class WindowsScripts : EditorWindow {
 		}
 	}
 
-
+	private void JoinNodes() =>
+		_selectedNode.SetNextNode(nxNode);
 
 	private void AddNode() {
-		//allNodes.Add(new Node(new Rect(0, 0, 200, 150), currentName));
+		allNodes.Add(new IfNode());
 		currentName = "";
 		Repaint();
 	}

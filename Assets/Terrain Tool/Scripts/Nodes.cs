@@ -58,11 +58,18 @@ public abstract class DrawnNode {
 	public bool CheckMouse(Event cE, Vector2 pan) =>
 		MyRect.Contains(cE.mousePosition - pan);
 
-	public virtual void DrawLine(DrawnNode target) =>
+	public virtual void DrawLine(DrawnNode target) {
+		if(target == null)
+			return;
 		Handles.DrawLine(ArrowSourcePos, target.ArrowTargetPos);
+	}
 
 	public virtual void DrawConnections() {
 		DrawLine(nextNode);
+	}
+
+	public void SetNextNode(DrawnNode node) {
+		nextNode = node;
 	}
 
 	//public bool OverNode
