@@ -88,19 +88,20 @@ public class WindowsScripts : EditorWindow {
 	}
 	private void CheckMouseInput(Event currentE) {
 
-        if (currentE.button == 0&& currentE.type==EventType.MouseDown)
+        if (currentE.button == 1&& currentE.type==EventType.MouseDown)
         {
             GenericMenu genericMenu = new GenericMenu();
 
 			foreach(var item in allNodes)
 			{
-				if(item.MyRect.Contains(currentE.mousePosition))
+				if(item.MyRect.Contains(currentE.mousePosition - graphPan))
 				{
 					nxNode = item;
+			        genericMenu.AddItem(new GUIContent("Unir Nodos"), false, JoinNodes);
 					break;
 				}
 			}
-			genericMenu.AddItem(new GUIContent("Unir Nodos"), false, JoinNodes);
+            genericMenu.ShowAsContext();
         }
 
 		if(!graphRect.Contains(currentE.mousePosition) || !(focusedWindow == this || mouseOverWindow == this))
@@ -131,7 +132,10 @@ public class WindowsScripts : EditorWindow {
 		{
 
 			if(allNodes[i].CheckMouse(Event.current, graphPan))
+            {
 				overNode = allNodes[i];
+                break;
+            }
 		}
 
 		var prevSel = _selectedNode;

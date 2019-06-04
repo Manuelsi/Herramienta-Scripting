@@ -55,8 +55,13 @@ public abstract class DrawnNode {
 	}
 	#endregion
 
-	public bool CheckMouse(Event cE, Vector2 pan) =>
-		MyRect.Contains(cE.mousePosition - pan);
+	public bool CheckMouse(Event cE, Vector2 pan)
+    {
+		return MyRect.Contains(cE.mousePosition - pan);
+        //if(value)
+        //    Debug.Log("selected");
+        //return value;
+    }
 
 	public virtual void DrawLine(DrawnNode target) {
 		if(target == null)
@@ -65,7 +70,10 @@ public abstract class DrawnNode {
 	}
 
 	public virtual void DrawConnections() {
+        var col = Handles.color;
+        Handles.color = Color.white;
 		DrawLine(nextNode);
+        Handles.color = col;
 	}
 
 	public void SetNextNode(DrawnNode node) {
