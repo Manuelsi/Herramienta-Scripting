@@ -10,7 +10,9 @@ public class WindowsScripts : EditorWindow {
 	private float toolbarHeight = 100;
 	private string currentName;
 
-    
+    private int _currentNode;
+
+    private DrawnNode _nodes;
 	private DrawnNode _selectedNode;
     private DrawnNode nxNode;
 	private bool _panningScreen;
@@ -46,6 +48,8 @@ public class WindowsScripts : EditorWindow {
         
         currentName = EditorGUILayout.TextField("Nombre: ", currentName);
 		EditorGUILayout.Space();
+        _currentNode = EditorGUILayout.Popup("Clases de Nodos", _currentNode, _nodes.nodeClass);
+        _nodes.nodeClass = _nodes.nodeClass[_currentNode];
 		if(GUILayout.Button("Create Script", GUILayout.Width(100), GUILayout.Height(30)))
 			AddNode();
 		EditorGUILayout.EndHorizontal();
