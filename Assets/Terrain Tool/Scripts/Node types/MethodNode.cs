@@ -1,16 +1,14 @@
 ﻿using System;
-using System.Collections;
 using System.Text;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 [Serializable]
-public class MethodNode : DrawnNode
-{
+public class MethodNode : DrawnNode {
 	public string methodName;
 	public bool isPublic;
 	private DrawnNode firstStatement;
-	public enum ReturnType { Void, Bool, Int, Float}
+	public enum ReturnType { Void, Bool, Int, Float }
 	public ReturnType currentType;
 	public string MethodReturn {
 		get {
@@ -30,19 +28,8 @@ public class MethodNode : DrawnNode
 		}
 	}
 
-	public override StringBuilder Content {
-		get {
-			var current = firstStatement;
-			var cont = new StringBuilder();
-			while(current != null)
-			{
-				cont.Append(current.Content);
-				current = current.nextNode;
-			}
-			return cont;
-		}
-	}
-
+	public override StringBuilder Content =>
+		GetContentUntilEnd(firstStatement);
 
 	public override string NodeType => "Method";
 
@@ -53,8 +40,8 @@ public class MethodNode : DrawnNode
 		var info = prev.data;
 		int lastIndex = NodeData.lastIndex;
 
-		info[lastIndex + 1] = currentType;
-		info[lastIndex + 2] = GetID(firstStatement);
+		info[lastIndex + 0] = currentType;
+		info[lastIndex + 1] = GetID(firstStatement);
 
 		return prev;
 	}
@@ -64,8 +51,12 @@ public class MethodNode : DrawnNode
 		var info = data.data;
 		int lastIndex = NodeData.lastIndex;
 
-		currentType = (ReturnType)info[lastIndex + 1];
-		firstStatement = GetNodeByID((int)info[lastIndex + 2]);
+		currentType = (ReturnType)info[lastIndex + 0];
+		firstStatement = GetNodeByID((int)info[lastIndex + 1]);
+	}
 
+	public override void DrawConnections() {
+		base.DrawConnections();
+		DrawLine(firstStatement, Color.blue);
 	}
 }

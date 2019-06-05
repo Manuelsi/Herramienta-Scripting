@@ -4,27 +4,34 @@ using UnityEngine;
 
 [Serializable]
 public class IfNode : DrawnNode {
-	public override StringBuilder Content => throw new NotImplementedException();
-
-	public override string NodeType { get => "If"; }
+	//Base
+	public override string NodeType => "If";
 	protected override Vector2 WindowSize => new Vector2(100, 100);
 
+	//Comparator
 	public enum IfSubtype { Method, Equal, NotEqual, LessThan, LessEqual, MoreThan, MoreEqual }
 	private IfSubtype currentSubtype;
 
+	//Comparison
 	public string var1;
 	public string var2;
-	public DrawnNode boolMethod;
+	public MethodNode boolMethod;
 	public string methodArgument;
 
+	//Internal nodes
+	public DrawnNode firstOfTrue;
+	public DrawnNode firstOfFalse;
+
+	public override StringBuilder Content =>
+			ScriptAssembler.InsertIf(Condition, GetContentUntilEnd(firstOfTrue), GetContentUntilEnd(firstOfFalse));
 
 	public override NodeData GetData() {
 		var prev = base.GetData();
 		var info = prev.data;
 		int lastIndex = NodeData.lastIndex;
-		info[lastIndex + 1] = var1;
-		info[lastIndex + 2] = var2;
-		info[lastIndex + 3] = boolMethod.ID;
+		info[lastIndex + 0] = var1;
+		info[lastIndex + 1] = var2;
+		info[lastIndex + 2] = boolMethod.ID;
 
 		return prev;
 	}
@@ -33,16 +40,14 @@ public class IfNode : DrawnNode {
 		base.SetData(data);
 		var info = data.data;
 		int lastIndex = NodeData.lastIndex;
-		var1 = (string)info[lastIndex + 1];
-		var2 = (string)info[lastIndex + 2];
-		boolMethod = GetNodeByID((int)info[lastIndex + 3]);
+		var1 = (string)info[lastIndex + 0];
+		var2 = (string)info[lastIndex + 1];
+		boolMethod = GetNodeByID((int)info[lastIndex + 2]) as MethodNode;
 	}
 
-	private string ComparatorSign
-	{
-		get
-		{
-			switch (currentSubtype)
+	private string ComparatorSign {
+		get {
+			switch(currentSubtype)
 			{
 				case IfSubtype.Equal:
 					return "==";
@@ -61,15 +66,27 @@ public class IfNode : DrawnNode {
 		}
 	}
 
-	private string Condition
-	{
-		get
-		{
+	private string Condition {
+		get {
 			if(currentSubtype != IfSubtype.Method)
 				return $"{var1} {ComparatorSign} {var2}";
-			//TODO: Nodo Metodo
-			throw new NotImplementedException();
+			if(boolMethod.currentType != MethodNode.ReturnType.Bool)
+			{
+				boolMethod = null;
+				throw new ArgumentException("If node condition method cannot return anything other than bool");
+			}
+			return $"{boolMethod.methodName}({(methodArgument != null ? methodArgument : null)})";
 		}
+	}
+
+	public override void DrawConnections() {
+		var rect = MyRect;
+		var dividedHeight = (rect.height * 0.9f) / 3f;
+		float offset = rect.height * 0.1f;
+		DrawLineFrom(new Vector2(rect.width, offset + dividedHeight * 1), boolMethod, Color.blue, true);
+		DrawLineFrom(new Vector2(rect.width, offset + dividedHeight * 2), firstOfTrue, Color.green, true);
+		DrawLineFrom(new Vector2(rect.width, offset + dividedHeight * 3), firstOfFalse, Color.red, true);
+		DrawLineFrom(new Vector2(rect.width / 2f, rect.height), nextNode, true);
 	}
 
 }

@@ -17,25 +17,21 @@ public abstract class DrawnNode {
 	public int ID { get; protected set; }
 
 	protected Rect _myRect;
-	public Rect MyRect
-	{
+	public Rect MyRect {
 		get => _myRect;
 		protected set => _myRect = value;
 	}
 
-	public Vector2 RectPos
-	{
+	public Vector2 RectPos {
 		get => MyRect.position;
 		set => _myRect.position = value;
 	}
 
-	public virtual Vector2 ArrowTargetPos
-	{
+	public virtual Vector2 ArrowTargetPos {
 		get => new Vector2(RectPos.x, MyRect.y + (MyRect.height / 2f));
 	}
 
-	public virtual Vector2 ArrowSourcePos
-	{
+	public virtual Vector2 ArrowSourcePos {
 		get => new Vector2(RectPos.x + MyRect.width, MyRect.y + (MyRect.height / 2f));
 	}
 
@@ -59,15 +55,37 @@ public abstract class DrawnNode {
 	public bool CheckMouse(Event cE, Vector2 pan) =>
 		MyRect.Contains(cE.mousePosition - pan);
 
+	#region Draw Line
+	public void DrawLineFrom(Vector2 SourcePos, DrawnNode target, bool useLocalPos = false) {
+		if(target == null)
+			return;
+		Handles.DrawLine(SourcePos + (useLocalPos ? RectPos : Vector2.zero), target.ArrowTargetPos);
+	}
+
+	public void DrawLineFrom(Vector2 localSourcePos, DrawnNode target, Color color, bool useLocalPos = false) {
+		var col = Handles.color;
+		Handles.color = color;
+		DrawLineFrom(localSourcePos, target, useLocalPos);
+		Handles.color = col;
+	}
+
 	public virtual void DrawLine(DrawnNode target) {
 		if(target == null)
 			return;
 		Handles.DrawLine(ArrowSourcePos, target.ArrowTargetPos);
 	}
 
+	public virtual void DrawLine(DrawnNode target, Color color) {
+		var col = Handles.color;
+		Handles.color = color;
+		DrawLine(target);
+		Handles.color = col;
+	}
+
 	public virtual void DrawConnections() {
 		DrawLine(nextNode);
 	}
+	#endregion
 
 	//public bool OverNode
 	//{ get { return _overNode; } }
@@ -77,14 +95,14 @@ public abstract class DrawnNode {
 		data.nodeType = NodeType;
 		data.id = ID;
 		data.data = new List<object> {
-            GetNextNodeID()//0
+			GetNextNodeID()//0
 			//Remember to update NodeData LastIndex 
 		};
 		return data;
 	}
 
 	public virtual void SetData(NodeData data) {
-		if (NodeType != data.nodeType)
+		if(NodeType != data.nodeType)
 			//throw new ArgumentException($"Node type does not match. Expected {NodeType} but got {data.nodeType}.");
 			throw new ArgumentException($"Tipos de nodos no coinciden. Esperaba {NodeType} pero obtuvo {data.nodeType}.");
 		ID = data.id;
@@ -113,6 +131,19 @@ public abstract class DrawnNode {
 
 	public static void SetCurrentAssignableID(int id) {
 		currentAvailableID = id;
+	}
+
+	protected StringBuilder GetContentUntilEnd(DrawnNode initialNode) {
+		if(initialNode == null)
+			return null;
+
+		var cont = new StringBuilder();
+		while(initialNode != null)
+		{
+			cont.Append(initialNode.Content);
+			initialNode = initialNode.nextNode;
+		}
+		return cont;
 	}
 }
 

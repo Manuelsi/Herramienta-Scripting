@@ -6,7 +6,7 @@ using UnityEditor;
 using System.IO;
 using System.Linq;
 using System.Text;
-using CustomMSLibrary.Standalone;
+using CustomMSLibrary.Core;
 using CustomMSLibrary.Unity;
 
 public static class ScriptAssembler {
@@ -62,6 +62,8 @@ public static class ScriptAssembler {
 	#endregion
 
 	#region InsertIf
+	//ref
+	//string
 	public static StringBuilder Ref_InsertIf(StringBuilder target, string condition, string trueContent,
 		string elseContent = EMPTY) {
 
@@ -70,7 +72,18 @@ public static class ScriptAssembler {
 			Ref_Enclose(target, "else", elseContent);
 		return target;
 	}
+	//stringBuilder
+	public static StringBuilder Ref_InsertIf(StringBuilder target, string condition, StringBuilder trueContent,
+		StringBuilder elseContent = null) {
 
+		Ref_Enclose(target, $"if({condition})", trueContent);
+		if(elseContent != null)
+			Ref_Enclose(target, "else", elseContent);
+		return target;
+	}
+
+	//noRef
+	//string
 	public static StringBuilder InsertIf(string condition, string trueContent, string elseContent = EMPTY) {
 		var newString = Enclose(
 			new StringBuilder("if(").Append(condition).Append(')'),
@@ -79,15 +92,26 @@ public static class ScriptAssembler {
 			newString = Enclose(newString.Append("else"), elseContent);
 		return newString;
 	}
+	//stringBuilder
+	public static StringBuilder InsertIf(string condition, StringBuilder trueContent, StringBuilder elseContent = null) {
+		var newString = Enclose(
+			new StringBuilder("if(").Append(condition).Append(')'),
+			trueContent);
+		if(elseContent != null)
+			newString = Enclose(newString.Append("else"), elseContent);
+		return newString;
+	}
 	#endregion
 
 	#region InsertFor
 	public static StringBuilder InsertFor(string counter, string count, string body) =>
-	Enclose($"for(int {counter} = 0; {counter} < {count}; {counter}++)",
-		body);
+	Enclose($"for(int {counter} = 0; {counter} < {count}; {counter}++)", body);
 
 	public static StringBuilder InsertFor(string counter, int count, string body) =>
 		InsertFor(counter, count.ToString(), body);
+
+	public static StringBuilder InsertFor(string counter, string count, StringBuilder body) =>
+		Enclose($"for(int {counter} = 0; {counter} < {count}; {counter}++)", body);
 	#endregion
 
 	public static string WrapStatement(params string[] items) {
@@ -205,7 +229,7 @@ public class ScriptComponentPackage {
 
 	public string Assemble() {
 		var fullScript = new StringBuilder();
-		_ = ScriptAssembler.Ref_Merge(fullScript, usings.Select(x=> $"using {x};").ToArray())?.Append(ScriptAssembler.NL);
+		_ = ScriptAssembler.Ref_Merge(fullScript, usings.Select(x => $"using {x};").ToArray())?.Append(ScriptAssembler.NL);
 
 		var classBody = new StringBuilder();
 		_ = ScriptAssembler.Ref_AddVariables(classBody, "int", ints)?.Append(ScriptAssembler.NL);
