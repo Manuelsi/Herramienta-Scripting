@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEditor;
 
@@ -9,8 +10,11 @@ public class WindowsScripts : EditorWindow {
 	private float toolbarHeight = 100;
 	private string currentName;
 
-	private DrawnNode _selectedNode;
+    private int _currentNode;
 
+    private DrawnNode _nodes;
+	private DrawnNode _selectedNode;
+    private DrawnNode nxNode;
 	private bool _panningScreen;
 	private Vector2 graphPan;
 	private Rect graphRect;
@@ -41,8 +45,11 @@ public class WindowsScripts : EditorWindow {
 		EditorGUILayout.LabelField("Script Easy", myStyle, GUILayout.Height(50));
 		EditorGUILayout.Space();
 		EditorGUILayout.BeginHorizontal();
-		currentName = EditorGUILayout.TextField("Nombre: ", currentName);
+        
+        currentName = EditorGUILayout.TextField("Nombre: ", currentName);
 		EditorGUILayout.Space();
+        _currentNode = EditorGUILayout.Popup("Clases de Nodos", _currentNode, _nodes.nodeClass);
+        //_nodes.nodeClass = _nodes.nodeClass[_currentNode]; //TODO: Patrick, arreglar esto. No se que es lo que queres hacer aca
 		if(GUILayout.Button("Create Script", GUILayout.Width(100), GUILayout.Height(30)))
 			AddNode();
 		EditorGUILayout.EndHorizontal();
@@ -85,6 +92,23 @@ public class WindowsScripts : EditorWindow {
 		GUI.EndGroup();
 	}
 	private void CheckMouseInput(Event currentE) {
+
+        if (currentE.button == 1&& currentE.type==EventType.MouseDown)
+        {
+            GenericMenu genericMenu = new GenericMenu();
+
+			foreach(var item in allNodes)
+			{
+				if(item.MyRect.Contains(currentE.mousePosition - graphPan))
+				{
+					nxNode = item;
+			        genericMenu.AddItem(new GUIContent("Unir Nodos"), false, JoinNodes);
+					break;
+				}
+			}
+            genericMenu.ShowAsContext();
+        }
+
 		if(!graphRect.Contains(currentE.mousePosition) || !(focusedWindow == this || mouseOverWindow == this))
 			return;
 
@@ -112,7 +136,10 @@ public class WindowsScripts : EditorWindow {
 		{
 
 			if(allNodes[i].CheckMouse(Event.current, graphPan))
+            {
 				overNode = allNodes[i];
+                break;
+            }
 		}
 
 		var prevSel = _selectedNode;
@@ -128,7 +155,8 @@ public class WindowsScripts : EditorWindow {
 		}
 	}
 
-
+	private void JoinNodes() =>
+		_selectedNode.SetNextNode(nxNode);
 
 	private void AddNode() {
 		allNodes.Add(new IfNode());

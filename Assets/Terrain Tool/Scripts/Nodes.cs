@@ -9,7 +9,8 @@ using UnityEditor;
 public abstract class DrawnNode {
 	public DrawnNode nextNode;
 
-	public abstract StringBuilder Content { get; }
+    public readonly string[] nodeClass = { "If", "For" };
+    public abstract StringBuilder Content { get; }
 	public abstract string NodeType { get; }
 	protected abstract Vector2 WindowSize { get; }
 
@@ -17,21 +18,25 @@ public abstract class DrawnNode {
 	public int ID { get; protected set; }
 
 	protected Rect _myRect;
-	public Rect MyRect {
+	public Rect MyRect
+	{
 		get => _myRect;
 		protected set => _myRect = value;
 	}
 
-	public Vector2 RectPos {
+	public Vector2 RectPos
+	{
 		get => MyRect.position;
 		set => _myRect.position = value;
 	}
 
-	public virtual Vector2 ArrowTargetPos {
+	public virtual Vector2 ArrowTargetPos
+	{
 		get => new Vector2(RectPos.x, MyRect.y + (MyRect.height / 2f));
 	}
 
-	public virtual Vector2 ArrowSourcePos {
+	public virtual Vector2 ArrowSourcePos
+	{
 		get => new Vector2(RectPos.x + MyRect.width, MyRect.y + (MyRect.height / 2f));
 	}
 
@@ -83,7 +88,14 @@ public abstract class DrawnNode {
 	}
 
 	public virtual void DrawConnections() {
+        var col = Handles.color;
+        Handles.color = Color.white;
 		DrawLine(nextNode);
+        Handles.color = col;
+	}
+
+	public void SetNextNode(DrawnNode node) {
+		nextNode = node;
 	}
 	#endregion
 
