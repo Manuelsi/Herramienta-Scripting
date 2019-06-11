@@ -9,8 +9,8 @@ public class IfNode : DrawnNode {
 	protected override Vector2 WindowSize => new Vector2(100, 100);
 
 	//Comparator
-	public enum IfSubtype { Method, Equal, NotEqual, LessThan, LessEqual, MoreThan, MoreEqual }
-	private IfSubtype currentSubtype;
+	public enum ComparisonType { Method, Equal, NotEqual, LessThan, LessEqual, MoreThan, MoreEqual }
+	private ComparisonType currentComparisonType;
 
 	//Comparison
 	public string var1;
@@ -24,6 +24,21 @@ public class IfNode : DrawnNode {
 
 	public override StringBuilder Content =>
 			ScriptAssembler.InsertIf(Condition, GetContentUntilEnd(firstOfTrue), GetContentUntilEnd(firstOfFalse));
+
+	private string ComparatorSign => GetComparatorSign(currentComparisonType);
+
+	private string Condition {
+		get {
+			if(currentComparisonType != ComparisonType.Method)
+				return $"{var1} {ComparatorSign} {var2}";
+			if(boolMethod.currentType != MethodNode.ReturnType.Bool)
+			{
+				boolMethod = null;
+				throw new ArgumentException("If node condition method cannot return anything other than bool");
+			}
+			return $"{boolMethod.methodName}({(methodArgument != null ? methodArgument : null)})";
+		}
+	}
 
 	public override NodeData GetData() {
 		var prev = base.GetData();
@@ -45,38 +60,23 @@ public class IfNode : DrawnNode {
 		boolMethod = GetNodeByID((int)info[lastIndex + 2]) as MethodNode;
 	}
 
-	private string ComparatorSign {
-		get {
-			switch(currentSubtype)
-			{
-				case IfSubtype.Equal:
-					return "==";
-				case IfSubtype.NotEqual:
-					return "!=";
-				case IfSubtype.LessThan:
-					return "<";
-				case IfSubtype.LessEqual:
-					return "<=";
-				case IfSubtype.MoreThan:
-					return ">";
-				case IfSubtype.MoreEqual:
-					return ">=";
-			}
-			return " ";
+	public static string GetComparatorSign(ComparisonType type) {
+		switch(type)
+		{
+			case ComparisonType.Equal:
+				return "==";
+			case ComparisonType.NotEqual:
+				return "!=";
+			case ComparisonType.LessThan:
+				return "<";
+			case ComparisonType.LessEqual:
+				return "<=";
+			case ComparisonType.MoreThan:
+				return ">";
+			case ComparisonType.MoreEqual:
+				return ">=";
 		}
-	}
-
-	private string Condition {
-		get {
-			if(currentSubtype != IfSubtype.Method)
-				return $"{var1} {ComparatorSign} {var2}";
-			if(boolMethod.currentType != MethodNode.ReturnType.Bool)
-			{
-				boolMethod = null;
-				throw new ArgumentException("If node condition method cannot return anything other than bool");
-			}
-			return $"{boolMethod.methodName}({(methodArgument != null ? methodArgument : null)})";
-		}
+		return " ";
 	}
 
 	public override void DrawConnections() {

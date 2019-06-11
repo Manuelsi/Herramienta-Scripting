@@ -114,6 +114,14 @@ public static class ScriptAssembler {
 		Enclose($"for(int {counter} = 0; {counter} < {count}; {counter}++)", body);
 	#endregion
 
+
+	#region InsertWhile
+	public static StringBuilder InsertWhile(string condition, StringBuilder body) {
+		return Enclose(condition, body);
+	} 
+
+	#endregion
+
 	public static string WrapStatement(params string[] items) {
 		if(items == null || items.Length == 0)
 			return null;
