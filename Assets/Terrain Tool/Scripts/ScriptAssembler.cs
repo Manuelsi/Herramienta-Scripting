@@ -116,9 +116,9 @@ public static class ScriptAssembler {
 
 
 	#region InsertWhile
-	public static StringBuilder InsertWhile(string condition, StringBuilder body) {
-		return Enclose(condition, body);
-	} 
+	public static StringBuilder InsertWhile(string condition, StringBuilder body) =>
+		Enclose($"while({condition})", body);
+
 
 	#endregion
 
