@@ -38,4 +38,28 @@ public class WhileNode : DrawnNode {
 		var rect = MyRect;
 		DrawLineFrom(new Vector2(rect.width / 2f, rect.height), firstWithinCycle, Color.blue, true);
 	}
+
+	public override NodeData GetData() {
+		var prev = base.GetData();
+		var info = prev.data;
+		int lastIndex = NodeData.lastIndex;
+
+		info[lastIndex + 0] = var1;
+		info[lastIndex + 1] = var2;
+		info[lastIndex + 2] = boolMethod.ID;
+		info[lastIndex + 3] = firstWithinCycle.ID;
+
+		return prev;
+	}
+
+	public override void SetData(NodeData data) {
+		base.SetData(data);
+		var info = data.data;
+		int lastIndex = NodeData.lastIndex;
+
+		var1 = (string)info[lastIndex + 0];
+		var2 = (string)info[lastIndex + 1];
+		boolMethod = GetNodeByID((int)info[lastIndex + 2]) as MethodNode;
+		firstWithinCycle = GetNodeByID((int)info[lastIndex + 3]);
+	}
 }
