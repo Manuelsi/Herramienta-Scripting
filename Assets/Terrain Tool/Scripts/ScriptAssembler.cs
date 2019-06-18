@@ -118,8 +118,11 @@ public static class ScriptAssembler {
 	#region InsertWhile
 	public static StringBuilder InsertWhile(string condition, StringBuilder body) =>
 		Enclose($"while({condition})", body);
+	#endregion
 
-
+	#region InsertDoWhile
+	public static StringBuilder InsertDoWhile(string condition, StringBuilder body) =>
+	Enclose("do", body).Append($"while({condition});"); 
 	#endregion
 
 	public static string WrapStatement(params string[] items) {

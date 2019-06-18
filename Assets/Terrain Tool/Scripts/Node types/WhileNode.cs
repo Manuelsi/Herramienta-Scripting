@@ -2,6 +2,7 @@
 using System.Text;
 using UnityEngine;
 
+[Serializable]
 public class WhileNode : DrawnNode {
 
 
@@ -10,7 +11,7 @@ public class WhileNode : DrawnNode {
 	public string var2;
 	public MethodNode boolMethod;
 	public string methodArgument;
-	private IfNode.ComparisonType conditionType;
+	protected IfNode.ComparisonType conditionType;
 	public DrawnNode firstWithinCycle;
 
 	//Base
@@ -19,7 +20,7 @@ public class WhileNode : DrawnNode {
 	public override StringBuilder Content =>
 		ScriptAssembler.InsertWhile(Condition, GetContentUntilEnd(firstWithinCycle));
 
-	private string Condition {
+	protected string Condition {
 		get {
 			if(conditionType != IfNode.ComparisonType.Method)
 				return $"{var1} {IfNode.GetComparatorSign(conditionType)} {var2}";
@@ -61,5 +62,6 @@ public class WhileNode : DrawnNode {
 		var2 = (string)info[lastIndex + 1];
 		boolMethod = GetNodeByID((int)info[lastIndex + 2]) as MethodNode;
 		firstWithinCycle = GetNodeByID((int)info[lastIndex + 3]);
+
 	}
 }
