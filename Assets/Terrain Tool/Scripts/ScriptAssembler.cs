@@ -122,7 +122,55 @@ public static class ScriptAssembler {
 
 	#region InsertDoWhile
 	public static StringBuilder InsertDoWhile(string condition, StringBuilder body) =>
-	Enclose("do", body).Append($"while({condition});"); 
+	Enclose("do", body).Append($"while({condition});");
+	#endregion
+
+	#region InserSwitch
+	public static StringBuilder Ref_InsertSwitch(StringBuilder target,
+	string variable, (string item, StringBuilder content)[] cases) =>
+	Ref_Enclose(target, $"switch({variable})", SwitchUnwrap(cases));
+
+
+	public static StringBuilder Ref_InsertSwitch(StringBuilder target,
+		string variable, (string cases, StringBuilder content)[] cases,
+		StringBuilder defaultAction) =>
+		Ref_Enclose(target, $"switch({variable})", SwitchUnwrap(cases, defaultAction));
+
+
+	public static StringBuilder InsertSwitch(string variable,
+		(string item, StringBuilder content)[] cases) =>
+			Ref_InsertSwitch(new StringBuilder(), variable, cases);
+
+	public static StringBuilder InsertSwitch(string variable,
+		(string item, StringBuilder content)[] cases,
+		 StringBuilder defaultAction) =>
+			Ref_InsertSwitch(new StringBuilder(), variable, cases, defaultAction);
+
+	private static StringBuilder SwitchUnwrap((string item, StringBuilder content)[] cases) {
+		const string _CASE = "case ";
+		const char _COLON = ':';
+		const string _BREAK = "break;";
+
+		var text = new StringBuilder();
+		int c = cases.Length;
+
+		for(int i = 0; i < c; i++)
+		{
+			text.Append(_CASE).Append(cases[i].item).Append(_COLON).Append(NL)
+				.Append(cases[i].content).Append(NL)
+				.Append(_BREAK).Append(NL);
+		}
+		return text;
+	}
+
+	private static StringBuilder SwitchUnwrap((string item, StringBuilder content)[] cases,
+		StringBuilder defaultCase) {
+
+		return SwitchUnwrap(cases)
+			.Append("default:").Append(NL)
+			.Append(defaultCase).Append(NL)
+			.Append("break;").Append(NL);
+	}
 	#endregion
 
 	public static string WrapStatement(params string[] items) {

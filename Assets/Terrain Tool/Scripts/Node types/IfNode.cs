@@ -10,7 +10,7 @@ public class IfNode : DrawnNode {
 
 	//Comparator
 	public enum ComparisonType { Method, Equal, NotEqual, LessThan, LessEqual, MoreThan, MoreEqual }
-	private ComparisonType currentComparisonType;
+	public ComparisonType currentComparisonType;
 
 	//Comparison
 	public string var1;
